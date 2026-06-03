@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "236333047162",
+    "project_id": "mediahub-168d3",
+    "storage_bucket": "mediahub-168d3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236333047162:android:f6845f06989b6711fd0ac3",
+        "android_client_info": {
+          "package_name": "com.sc.hubmedia"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrOGn_Z6Qu7fyRX_QEpxNuyysRBqt5r2g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
