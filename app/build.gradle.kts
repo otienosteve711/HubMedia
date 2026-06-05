@@ -59,6 +59,7 @@ dependencies {
     //firebase dependencies
     //firebase BOM - management dependency for firebase products
     implementation(platform("com.google.firebase:firebase-bom:33.14.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
     //database
     implementation("com.google.firebase:firebase-firestore-ktx")
     //storage
