@@ -31,34 +31,74 @@ import kotlinx.coroutines.delay
 // material design icons
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sc.hubmedia.navigation.Screen
 import com.sc.hubmedia.ui.theme.MediaHubTheme
+import com.sc.hubmedia.viewmodel.AuthState
+import com.sc.hubmedia.viewmodel.AuthViewModel
 
 // timer delay
 // import kotlin.coroutines.delay
 @Composable
-fun SplashScreen(navController: NavController){
+fun SplashScreen(navController: NavController, authViewModel: AuthViewModel= viewModel()){
+    // collecting authstates from the view model
+    val authState by authViewModel.authState.collectAsState()
     // animating my logo scale
     val scale = remember { Animatable(initialValue = 0f) }
     // launched effect to delay splash screen showcase
     // basically we want the screen to be in view for a number of seconds
-    LaunchedEffect(key1 = Unit){
-        scale.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
+    // Setting our splash screen timer
+        LaunchedEffect(key1 = Unit) {
+            scale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
             )
-        )
-        delay(timeMillis = 1500) // splash screen to last 1.5 seconds
-        // after the 1.5 seconds we then redirect the user to the login screen
-        navController.navigate(Screen.Login.route){
-            // splash will become the backstack screen i.e. when user presses back from login
-            popUpTo(Screen.Splash.route){
-                inclusive=true
+            delay(timeMillis = 1500) // splash screen to last 1.5 seconds
+        }
+
+
+    // launched effect with viewmodel
+    LaunchedEffect(authState) {
+        // if user is logged in get to dashboard
+        // else get to login screen
+        when (authState){
+            //success
+            is AuthState.Success -> {
+                navController.navigate(Screen.Dashboard.route){popUpTo(Screen.Splash.route){inclusive=true} }
+
             }
+            is AuthState.Idle , is AuthState.Logout -> {
+                delay(1400)
+                navController.navigate(Screen.Login.route){
+                    popUpTo(Screen.Splash.route){inclusive = true}
+                }
+
+            }
+            else -> Unit
         }
     }
+    // Launched effect without viewmodel
+//    LaunchedEffect(key1 = Unit){
+//        scale.animateTo(
+//            targetValue = 1f,
+//            animationSpec = spring(
+//                dampingRatio = Spring.DampingRatioMediumBouncy,
+//                stiffness = Spring.StiffnessLow
+//            )
+//        )
+//        delay(timeMillis = 1500) // splash screen to last 1.5 seconds
+//        // after the 1.5 seconds we then redirect the user to the login screen
+//        navController.navigate(Screen.Login.route){
+//            // splash will become the backstack screen i.e. when user presses back from login
+//            popUpTo(Screen.Splash.route){
+//                inclusive=true
+//            }
+//        }
+//    }
     // define our logo
     // Box : another example of a container for hosting composable elements
     Box(Modifier.fillMaxSize()

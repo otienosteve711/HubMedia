@@ -36,6 +36,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
@@ -47,14 +49,27 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.sc.hubmedia.navigation.Screen
 import com.sc.hubmedia.ui.theme.MediaHubTheme
+import com.sc.hubmedia.viewmodel.AuthState
+import com.sc.hubmedia.viewmodel.AuthViewModel
+
 @Composable
-fun ForgotPasswordScreen(navController: NavController){
+fun ForgotPasswordScreen(navController: NavController, authViewModel: AuthViewModel= viewModel()){
     // data state def.
     var email by remember { mutableStateOf("") }
+    val authState by authViewModel.authState.collectAsState()
+    val isLoading = authState is AuthState.Loading
+    val isResetSent = authState is AuthState.PasswordResetSent
+    val errorMessage= (authState as? AuthState.Error)?.message
+
+    // clean up the states while vacating this screen
+//    DisposableEffect(Unit) {
+//        onDispose { authViewModel.clearState() }
+//    }
     // this will reference whether a reset password email
     // has been sent to the user or not
     var sent by remember { mutableStateOf(false) }
@@ -80,7 +95,7 @@ fun ForgotPasswordScreen(navController: NavController){
             Spacer(Modifier.height(32.dp))
             // if email has been sent show msg else show
             // form
-            if(sent){
+            if(isResetSent && sent){
                 Text("Reset Link has already been sent. Kindly check " +
                         " your inbox!!",
                     color = MaterialTheme.colorScheme.onPrimaryContainer)
@@ -101,7 +116,10 @@ fun ForgotPasswordScreen(navController: NavController){
                 )
                 Spacer(Modifier.height(12.dp))
                 Button(
-                    onClick = {sent=true},
+                    onClick = {
+                        sent=true
+                        authViewModel.sendPasswordReset(email)
+                              },
                     modifier = Modifier.fillMaxWidth().height(52.dp),
                     shape= RoundedCornerShape(12.dp),
                     enabled = email.isNotBlank()

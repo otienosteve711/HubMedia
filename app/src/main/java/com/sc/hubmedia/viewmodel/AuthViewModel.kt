@@ -97,6 +97,28 @@ class AuthViewModel : ViewModel(){
     // fetch user profile from firestore
     fun fetchUserProfile(uid: String){
         // TODO : Fetch user profile from firestore
+        viewModelScope.launch{
+            try {
+                _authState.value = AuthState.Loading
+                // first we create a reference to our firestore collection
+                val doc = db.collection("users")
+                    .document(uid)
+                    .get().await()
+                val profile = UserProfile(
+                    uid = uid,
+                    fullname = doc.getString("fullname") ?: "",
+                    email = doc.getString("email") ?: "",
+                    role = doc.getString("role") ?: "student"
+
+                    )
+                _currentProfile.value = profile
+                _authState.value = AuthState.Success(profile)
+            } catch (e: Exception){
+                _authState.value = AuthState.Error(
+                    e.message ?: "Failed to load profile"
+                )
+            }
+        }
 
     }
     // forgot password
