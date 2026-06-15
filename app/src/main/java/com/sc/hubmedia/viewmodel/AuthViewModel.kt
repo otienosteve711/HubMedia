@@ -66,6 +66,7 @@ class AuthViewModel : ViewModel(){
                     email = email,
                     role = role
                 )
+
                 db.collection("users")
                     .document(uid)
                     .set(profile.toMap())
@@ -140,6 +141,10 @@ class AuthViewModel : ViewModel(){
         auth.signOut()
         _currentProfile.value = null
         _authState.value = AuthState.Logout
+    }
+    // Method to clear states
+    fun clearState(){
+        _authState.value = AuthState.Idle
     }
 
 }

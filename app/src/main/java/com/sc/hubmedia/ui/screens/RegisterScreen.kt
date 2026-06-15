@@ -241,6 +241,9 @@ fun RegisterScreen(navController: NavController, authViewModel: AuthViewModel= v
             // to link to the register screen
             TextButton(
                 onClick = {
+                    // clear any state loaded on the register screen so that the states are reset when we navigate to login
+                    authViewModel.clearState()
+                    navController.navigate(Screen.Register.route)
                     navController.navigate(
                         Screen.Login.route){
                         popUpTo(Screen.Register.route) {inclusive = true}

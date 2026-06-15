@@ -170,6 +170,7 @@ fun LoginScreen(navController: NavController, authViewModel: AuthViewModel = vie
             // To link to the register string
             TextButton(
                 onClick = {
+
                     //authViewModel.clearState()
                     navController.navigate(
                         Screen.Register.route
