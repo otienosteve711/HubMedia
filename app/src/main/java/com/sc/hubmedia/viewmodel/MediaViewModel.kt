@@ -51,6 +51,7 @@ class MediaViewModel: ViewModel(){
         description: String,
         category: String,
         isPublic: Boolean,
+        ownerName: String,
         mediaUri: Uri
     ){
         val uid = auth.currentUser?.uid?: return
