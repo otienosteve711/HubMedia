@@ -42,9 +42,62 @@ class MediaViewModel: ViewModel(){
     private val _uploadProgress = MutableStateFlow(0f)
     val uploadProgress: StateFlow<Float> = _uploadProgress
 
-    fun loadPublicMedia(){}
-    fun loadMyMedia(){}
-    fun loadAllMedia(){}
+    fun loadPublicMedia(){
+        viewModelScope.launch {
+            try {
+                // first we retrieve firestore collection
+                // filter the data via the isPublic field = true
+                // order our data by the latest i.e. UploadedAt field
+                val snapshot = db.collection("media")
+                    .whereEqualTo("isPublic",true)
+                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                //now populate the viewmodel reference for public media
+                //via capturing the snapshot and mapping each record in the collection to our MediaItem model
+                _publicMedia.value = snapshot.documents.map { doc ->
+                    doc.toObject(MediaItem::class.java)!!.copy(id = doc.id)
+                }
+
+            }catch (e: Exception){
+                _mediaState.value = MediaState.Error(e.message ?: "Failed to load media items.")
+            }
+        }
+    }
+    // load users private media items
+    fun loadMyMedia(){
+        val uid = auth.currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                val snapshot = db.collection("media")
+                    .whereEqualTo("ownerId",uid)
+                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                _myMedia.value = snapshot.documents.map{doc ->
+                    doc.toObject(MediaItem::class.java)!!.copy(id=doc.id)
+                }
+
+            }catch (e: Exception){
+                _mediaState.value = MediaState.Error(e.message ?: "Failed to load media items.")
+
+            }
+        }
+    }
+    // load all media for teachers access / view
+    fun loadAllMedia(){
+        viewModelScope.launch {
+            try {
+                val snapshot = db.collection("media")
+
+                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                _allMedia.value = snapshot.documents.map{doc ->
+                    doc.toObject(MediaItem::class.java)!!.copy(id=doc.id)
+                }
+
+            }catch (e: Exception){
+                _mediaState.value = MediaState.Error(e.message ?: "Failed to load media items.")
+
+
+            }
+        }
+    }
     fun uploadMedia(
         context: Context,
         title : String,
@@ -74,18 +127,55 @@ class MediaViewModel: ViewModel(){
                     category = category,
                     isPublic = isPublic
                 )
+                // push our item to firebase for storage
+                db.collection("media").add(mediaItem.toMap()).await()
+                _uploadProgress.value=0f
+                // Change the progress value
+                _mediaState.value= MediaState.Success
+
 
             }catch (e: Exception){_mediaState.value= MediaState.Error(e.message?: "Upload Fail")
             }
         }
     }
-    fun updateMedia(){}
-    fun deleteMedia(){}
+    // update existing media
+    fun updateMedia(
+        mediaId : String,
+        title: String,
+        description: String,
+        isPublic: Boolean
+    ){
+        viewModelScope.launch { _mediaState.value = MediaState.Loading
+            try {
+                db.collection("media").document(mediaId).update(mapOf(
+                    "title" to title,
+                    "description" to description,
+                    "isPublic" to isPublic
+                )).await()
+                _mediaState.value = MediaState.Success
+
+            }catch (e: Exception){
+                _mediaState.value = MediaState.Error(e.message ?: "Update Failed")
+            }
+
+        }
+    }
+    // delete existing media
+    fun deleteMedia(item: MediaItem){
+        viewModelScope.launch {
+            try {
+                db.collection("media").document(item.id).delete().await()
+                _mediaState.value = MediaState.Success
+            }catch (e: Exception){
+                _mediaState.value = MediaState.Error(e.message ?: "Delete Failed!!")
+            }
+        }
+    }
     fun clearState(){
         _mediaState.value = MediaState.Idle
     }
 
 
 
-    // access to public media items in screens using this vm
+
 }
