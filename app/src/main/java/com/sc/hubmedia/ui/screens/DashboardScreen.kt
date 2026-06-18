@@ -3,13 +3,20 @@ package com.sc.hubmedia.ui.screens
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,11 +24,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.sc.hubmedia.model.UserRole
 import com.sc.hubmedia.navigation.Screen
+import com.sc.hubmedia.ui.components.AppBottomBar
 import com.sc.hubmedia.ui.components.AppDrawer
+import com.sc.hubmedia.ui.theme.MediaHubTheme
 import com.sc.hubmedia.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -53,16 +64,48 @@ fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel= 
                     navController.navigate(Screen.Login.route){popUpTo(0){inclusive=true}
                     }
                 }
+            )
+        }
+    ) {                 //Scaffold : allows definition of different parts of  the ui
+        Scaffold(
+            // topbar place click for menu to open
+            topBar = {
+                TopAppBar(
+                    title = {Text("MediaHub")},
+                    navigationIcon = { IconButton(
+                        onClick = {scope.launch { drawerScope.open() }}
+                    ){ Icon(Icons.Default.Menu,"Menu") } },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surface)
+                )
+            },
+            bottomBar = {
+                // bottom nav goes here
+                AppBottomBar(
+                    "dashboard",
+                    onDashboardClick = {},
+                    onUploadClick = {navController.navigate(Screen.UploadMedia.route)},
+                    onProfileClick = {navController.navigate(Screen.Profile.route)}
+                )
+            },
+            containerColor = MaterialTheme.colorScheme.background
+        ){
+            padding ->
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
             ) {
-                //Scaffold : allows definition of different parts of  the ui
-                Scaffold(
-                    topBar = {},
-                    bottomBar = {},
-                    containerColor = MaterialTheme.colorScheme.background
-                ){}
+                Text("Dashboard Content goes Here")
             }
         }
-    ) { }
+    }
 
     }
+@Preview(showBackground = true)
+@Composable
+fun DashboardScreenPreview(){
+    MediaHubTheme {
+        DashboardScreen(rememberNavController())
+    }
+}
 
