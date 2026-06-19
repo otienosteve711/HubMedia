@@ -23,7 +23,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Title
 import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -166,6 +169,22 @@ fun UploadMediaScreen(navController: NavController, authViewModel: AuthViewModel
 
             }
         }
+        // inputs for title and description collections
+        OutlinedTextField(
+            value = title, onValueChange = {title = it},
+            label = {Text("Title")},
+            leadingIcon = {Icon(Icons.Default.Title,null)},
+            minLines = 3, modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        )
+        OutlinedTextField(
+            value = description, onValueChange = {description = it},
+            label = {Text("Description")},
+            leadingIcon = {Icon(Icons.Default.Description,null)},
+            minLines = 3, modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        )
+        // TODO : add category picker, public toggle, btn
     }
 
 
