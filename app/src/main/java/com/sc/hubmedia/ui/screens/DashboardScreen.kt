@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
@@ -40,6 +39,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -77,6 +77,14 @@ fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel= 
     val authState by authViewModel.authState.collectAsState()
     val profile by authViewModel.currentProfile.collectAsState()
     val isTeacher = profile?.userRole() == UserRole.TEACHER
+    // call the methods for the firestore fetch
+    LaunchedEffect(profile) {
+        if(profile != null) {
+            mediaViewModel.loadPublicMedia()
+            mediaViewModel.loadMyMedia()
+            if (isTeacher) mediaViewModel.loadAllMedia()
+        }
+    }
     //firestore firebase references
     val publicMedia by mediaViewModel.publicMedia.collectAsState()
     val myMedia by mediaViewModel.allMedia.collectAsState()

@@ -47,10 +47,10 @@ class MediaViewModel: ViewModel(){
             try {
                 // first we retrieve firestore collection
                 // filter the data via the isPublic field = true
-                // order our data by the latest i.e. UploadedAt field
+                // order our data by the latest i.e. uploadedAt field
                 val snapshot = db.collection("media")
                     .whereEqualTo("isPublic",true)
-                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                    .orderBy("uploadedAt",Query.Direction.DESCENDING).get().await()
                 //now populate the viewmodel reference for public media
                 //via capturing the snapshot and mapping each record in the collection to our MediaItem model
                 _publicMedia.value = snapshot.documents.map { doc ->
@@ -69,7 +69,7 @@ class MediaViewModel: ViewModel(){
             try {
                 val snapshot = db.collection("media")
                     .whereEqualTo("ownerId",uid)
-                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                    .orderBy("uploadedAt",Query.Direction.DESCENDING).get().await()
                 _myMedia.value = snapshot.documents.map{doc ->
                     doc.toObject(MediaItem::class.java)!!.copy(id=doc.id)
                 }
@@ -86,7 +86,7 @@ class MediaViewModel: ViewModel(){
             try {
                 val snapshot = db.collection("media")
 
-                    .orderBy("UploadedAt",Query.Direction.DESCENDING).get().await()
+                    .orderBy("uploadedAt",Query.Direction.DESCENDING).get().await()
                 _allMedia.value = snapshot.documents.map{doc ->
                     doc.toObject(MediaItem::class.java)!!.copy(id=doc.id)
                 }
