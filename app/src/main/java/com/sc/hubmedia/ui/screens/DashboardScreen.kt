@@ -1,6 +1,5 @@
 package com.sc.hubmedia.ui.screens
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.items
+// dynamically list content in android apps
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -65,7 +66,7 @@ import com.sc.hubmedia.ui.theme.MediaHubTheme
 import com.sc.hubmedia.viewmodel.AuthViewModel
 import com.sc.hubmedia.viewmodel.MediaViewModel
 import kotlinx.coroutines.launch
-import java.nio.file.WatchEvent
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -79,7 +80,7 @@ fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel= 
     //firestore firebase references
     val publicMedia by mediaViewModel.publicMedia.collectAsState()
     val myMedia by mediaViewModel.allMedia.collectAsState()
-    val allMedia by mediaViewModel.mediaState.collectAsState()
+    val allMedia by mediaViewModel.allMedia.collectAsState()
     // filtering for assets
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -199,7 +200,8 @@ fun DashboardScreen(navController: NavController, authViewModel: AuthViewModel= 
                                 item = item,
                                 onClick = {navController.navigate(
                                     Screen.MediaDetail.createRoute(item.id)
-                                )}
+                                )
+                                }
                             )
                         }
                     }
