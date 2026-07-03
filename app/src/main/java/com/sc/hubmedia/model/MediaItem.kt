@@ -1,6 +1,7 @@
 package com.sc.hubmedia.model
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.PropertyName
 
 // enum class : static values that should not change
 enum class UserRole {STUDENT,TEACHER}
@@ -29,9 +30,12 @@ data class MediaItem(
     val title: String = "",
     val description: String="",
     val imageUrl: String = "",
+    @get:PropertyName("isPublic")
+    @set:PropertyName("isPublic")
+    var isPublic: Boolean= false,
+
     val ownerName: String = "",
     val ownerId: String = "",
-    val isPublic: Boolean= false,
     val category : String = "",
     val uploadedAt: Timestamp = Timestamp.now(), // captures current time
 ){

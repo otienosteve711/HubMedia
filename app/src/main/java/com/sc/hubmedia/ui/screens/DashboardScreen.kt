@@ -249,7 +249,7 @@ fun MediaListCard(item: MediaItem, onClick: () -> Unit){
                 )
             }else { Box(contentAlignment = Alignment.Center,
                 modifier= Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)
-                )) {
+                ).background(MaterialTheme.colorScheme.primaryContainer)) {
                 Icon(
                     Icons.Default.Category,
                     contentDescription = item.category,

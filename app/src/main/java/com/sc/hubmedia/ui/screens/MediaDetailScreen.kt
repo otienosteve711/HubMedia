@@ -1,5 +1,6 @@
 package com.sc.hubmedia.ui.screens
 
+import android.R
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -105,7 +106,7 @@ fun MediaDetailScreen(navController: NavController, mediaId: String,
         containerColor = MaterialTheme.colorScheme.background
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-            Column(modifier = Modifier.fillMaxSize().verticalScroll(
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(
                 rememberScrollState()
             )) {
                 // category specific presentations
@@ -140,15 +141,20 @@ fun MediaDetailScreen(navController: NavController, mediaId: String,
                 }
                 Column(Modifier.padding(20.dp)) {
 
-                        Text(item.title)
+                        Text(item.title, style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.onBackground)
                         Spacer(Modifier.height(16.dp))
-                        Text(item.category)
+                        Text(item.category, style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onBackground)
                         Spacer(Modifier.height(16.dp))
-                        Text(item.ownerName)
+                        Text(item.ownerName,style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onBackground)
                         Spacer(Modifier.height(16.dp))
-                        Text(item.description)
+                        Text(item.description,style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onBackground)
                         Spacer(Modifier.height(16.dp))
-                        Text(if (item.isPublic)"PUBLIC MEDIA" else "PRIVATE MEDIA")
+                        Text(if (item.isPublic)"PUBLIC MEDIA" else "PRIVATE MEDIA",style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onBackground)
 
                 }
 
@@ -174,6 +180,7 @@ fun MediaDetailScreen(navController: NavController, mediaId: String,
                     onClick = {
                         showDeleteDialog = false
                         mediaViewModel.deleteMedia(item)
+                        navController.navigate(Screen.Dashboard.route)
                     }
                 ) { Text("Delete",
                     color = MaterialTheme.colorScheme.error) }

@@ -4,6 +4,7 @@ package com.sc.hubmedia.navigation
 import android.window.SplashScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 // this is the navigation manager that allows movement from one screen to another through path definition
 import androidx.navigation.NavHostController
@@ -18,9 +19,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 // importing all our screens
 import com.sc.hubmedia.ui.screens.*
+import com.sc.hubmedia.viewmodel.AuthViewModel
+import com.sc.hubmedia.viewmodel.MediaViewModel
 
 @Composable
 fun MediaHubNavGraph(navController: NavHostController){
+    val authViewModel: AuthViewModel = viewModel()
+    val mediaViewModel : MediaViewModel = viewModel()
     // we define our navigation container
     // stipulate the default start destination (where does the app start)
     NavHost(
@@ -29,24 +34,24 @@ fun MediaHubNavGraph(navController: NavHostController){
     ){
         // state our app screens that are def. in screen.kt
         composable(Screen.Splash.route){
-            SplashScreen(navController)
+            SplashScreen(navController=navController, authViewModel=authViewModel)
         }
         composable(Screen.Login.route){
-            LoginScreen(navController)
+            LoginScreen(navController=navController, authViewModel=authViewModel)
         }
         composable(Screen.Register.route){
-            RegisterScreen(navController)
+            RegisterScreen(navController=navController, authViewModel=authViewModel)
         }
         composable(Screen.ForgotPassword.route){
-            ForgotPasswordScreen(navController)
+            ForgotPasswordScreen(navController=navController,authViewModel=authViewModel)
         }
         composable(Screen.Dashboard.route){
-            DashboardScreen(navController)
+            DashboardScreen(navController=navController,authViewModel=authViewModel, mediaViewModel = mediaViewModel)
         }
 
 
         composable(Screen.UploadMedia.route){
-            UploadMediaScreen(navController)
+            UploadMediaScreen(navController=navController, authViewModel=authViewModel, mediaViewModel = mediaViewModel)
         }
         // for screens which require info on navigation we use the arguments attribute together with
         // navtype to define datatype of info shared to access route
@@ -56,14 +61,15 @@ fun MediaHubNavGraph(navController: NavHostController){
             // inside we maintain a backstack i.e. when user presses back we go back to
             // the previous screen without the ID
             val mediaId = backStack.arguments?.getString("mediaId")?: ""
-            MediaDetailScreen(navController, mediaId)
+            MediaDetailScreen(navController=navController, mediaId=mediaId, authViewModel = authViewModel, mediaViewModel = mediaViewModel)
 
         }
         composable(route = Screen.EditMedia.route,
             arguments = listOf(navArgument(name="mediaId")
             {type= NavType.StringType})){ backStack ->
             val mediaId = backStack.arguments?.getString("mediaId")?: ""
-            EditMediaScreen(navController, mediaId)
+            EditMediaScreen(navController=navController, mediaId=mediaId,
+                mediaViewModel=mediaViewModel)
 
         }
 
